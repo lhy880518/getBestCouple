@@ -1,10 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
 </head>
 <body>
-
+<button onclick="openTextFile()" id="btn">Open</button>
+<div id='output'></div>
 </body>
+<script type="text/javascript">
+    function openTextFile() {
+        var input = document.createElement("input");
+
+        input.type = "file";
+        input.accept = "text/plain";
+
+        input.onchange = function (event) {
+            processFile(event.target.files[0]);
+        };
+
+        input.click();
+    }
+
+    function processFile(file) {
+        document.getElementById("btn").style.display="none";
+
+        var reader = new FileReader();
+        // 최대 겹치는 문자열을 가지고 있는 변수 입니다.
+        var max_combi = 1;
+
+        reader.onload = function () {
+
+            var dataArray = reader.result.split("\n");
+            var resultArray = [[],[],[],[],[],[],[],[],[],[]];
+
+            // 모든 형태소를 넣고있는 총 비교 대상입니다.
+            var objData = {};
+
+            // 겹칩이 한번이라도 발생할때만 넣는 객체 입니다.
+            var resultObjData = {};
+
+            for(var i=1 ; i <= dataArray[0] ; i++){
+
+                for(var k=10 ; k >= max_combi ; k--){
+
+                    var combinationArray = callDoCombi(dataArray[i].split(" ").sort(), k);
+                    var combiLength = combinationArray.length;
+
+                    for(var m = 0 ; m < combiLength ; m++){
+                        if(objData[combinationArray[m].join("")] != undefined){
+                            objData[combinationArray[m].join("")][objData[combinationArray[m].join("")].length] = i;
+                            resultObjData[combinationArray[m].join("")] = objData[combinationArray[m].join("")];
+                            max_combi = k;
+                        }else{
+                            objData[combinationArray[m].join("")] = [i];
+                        }
+                    }
+
+                    if(max_combi == k){
+                        break;
+                    }
+                }
+            }
+
+            var rCount = Object.keys(resultObjData).length;
+            var output = [];
+
+            for(var r =0 ; r < rCount ; r++){
+                var keyLength = Object.keys(resultObjData)[r].length;
+                var objValue = Object.values(resultObjData)[r];
+                var objValueLength = Object.values(resultObjData)[r].length;
+                if(keyLength == max_combi){
+                    if(objValueLength == 2){
+                        output.push(objValue.join("-"));
+                    }else if(objValueLength > 2){
+                        var swapCombiArray = getAllCombinations(objValue, 2);
+                        var swapCombiArrayLength = swapCombiArray.length;
+                        for(var s = 0 ; s < swapCombiArrayLength ; s++){
+                            output.push(swapCombiArray[s].join("-"));
+                        }
+
+                    }
+                }
+            }
+
+            document.getElementById("btn").style.display="block";
+            document.getElementById("output").innerHTML = "";
+            document.getElementById("output").innerHTML = output.join("<br/>");
+
+        };
+
+        reader.readAsText(file, "euc-kr");
+    }
+
+    function callDoCombi(arr, pickCount){
+        var doCombiResult = [];
+        var combArr = [];
+        var checkFlag = arr.length;
+
+        doCombination(combArr, checkFlag, pickCount, 0, 0, arr, doCombiResult);
+
+        return doCombiResult;
+
+        function doCombination(combArr, checkFlag, pickCount, index, target, arr, doCombiResult){
+            if(pickCount == 0){
+                var beforeInsert = [];
+                for(var i=0 ; i < index; i++){
+                    beforeInsert[i] = arr[combArr[i]];
+                }
+                doCombiResult[doCombiResult.length] = beforeInsert;
+                return doCombiResult;
+            }else if(target == checkFlag){
+                return;
+            }else{
+                combArr[index] = target;
+
+                doCombination(combArr, checkFlag, pickCount-1, index+1, target+1, arr, doCombiResult);
+
+                doCombination(combArr, checkFlag, pickCount, index, target+1, arr, doCombiResult);
+            }
+        }
+    }
+</script>
 </html>
