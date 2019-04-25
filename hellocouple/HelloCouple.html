@@ -46,12 +46,17 @@
                     var combiLength = combinationArray.length;
 
                     for(var m = 0 ; m < combiLength ; m++){
-                        if(objData[combinationArray[m].join("")] != undefined){
-                            objData[combinationArray[m].join("")][objData[combinationArray[m].join("")].length] = i;
-                            resultObjData[combinationArray[m].join("")] = objData[combinationArray[m].join("")];
+                        var combiJoiner = combinationArray[m].join("");
+
+                        if(objData[combiJoiner] != undefined){
+                            var objDataCombiLength = objData[combiJoiner].length;
+
+                            objData[combiJoiner][objDataCombiLength] = i;
+                            resultObjData[combiJoiner] = objData[combiJoiner];
+
                             max_combi = k;
                         }else{
-                            objData[combinationArray[m].join("")] = [i];
+                            objData[combiJoiner] = [i];
                         }
                     }
 
@@ -65,15 +70,19 @@
             var output = [];
 
             for(var r =0 ; r < rCount ; r++){
+
                 var keyLength = Object.keys(resultObjData)[r].length;
                 var objValue = Object.values(resultObjData)[r];
                 var objValueLength = Object.values(resultObjData)[r].length;
+
                 if(keyLength == max_combi){
                     if(objValueLength == 2){
                         output.push(objValue.join("-"));
                     }else if(objValueLength > 2){
-                        var swapCombiArray = getAllCombinations(objValue, 2);
+
+                        var swapCombiArray = callDoCombi(objValue, 2);
                         var swapCombiArrayLength = swapCombiArray.length;
+
                         for(var s = 0 ; s < swapCombiArrayLength ; s++){
                             output.push(swapCombiArray[s].join("-"));
                         }

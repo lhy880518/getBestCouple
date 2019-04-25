@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<button onclick="openTextFile()">please select file.</button>
+<div id='output'></div>
+</body>
+<script type="text/javascript">
+    function openTextFile() {
+        var input = document.createElement("input");
+
+        input.type = "file";
+        input.accept = "text/plain";
+
+        input.onchange = function (event) {
+            processFile(event.target.files[0]);
+        };
+
+        input.click();
+    }
+
+    function processFile(file) {
+        var reader = new FileReader();
+
+        reader.onload = function () {
+            // output을 초기화 합니다
+            document.getElementById("output").innerHTML = "";
+
+            // 파일에서 읽은 데이터를 분할합니다.
+            var dataArray = dataArray = reader.result.split("\n");
+
+            var alphaArray = [];
+
+            // 분할한 파일을 각 라인별로 읽으며 각 알파벳에다가 멤버 아이디를 넣습니다.
+            // 알파벳 위치는 ASCII A = 65이기때문에 -65하여 저장합니다.
+            for(var i=1; i <= dataArray[0] ; i++){
+
+                var splitArr = dataArray[i].split(" ");
+
+                for(var j = 0 ; j < 10 ; j++){
+                    var alphaArrayNumber = splitArr[j].charCodeAt()-65;
+                    doubleArrayAddValue(alphaArray, alphaArrayNumber, i);
+                }
+            }
+
+            var maxArrayInfo = [];
+            // 사람 수만큼 반복
+            for(var x=1; x <= dataArray[0] ; x++ ){
+
+                var meNumber = x;
+                var me = dataArray[meNumber].split(" ");
+                var resultArray = [];
+                var roundMaxPoint = 0;
+
+                // 글자 수 만큼 반복
+                for(var k = 0 ; k < 10 ; k++){
+                    var alphaMemberArr = alphaArray[me[k].charCodeAt()-65];
+                    var alphaMemberArrLength = alphaMemberArr.length;
+
+                    for(var l = 0 ; l < alphaMemberArrLength ; l++){
+                        maxArrayInfo = oneArrayAddValue(resultArray, alphaMemberArr[l], meNumber, maxArrayInfo, roundMaxPoint);
+                        roundMaxPoint = maxArrayInfo[0][3];
+                    }
+
+                    // 이미 최대값을 구한시점에 배열에서 없앱니다.
+                    alphaArray[me[k].charCodeAt()-65].splice(0,1);
+
+                    //더이상 계산을해도 max값을 채울수 없는 경우 break합니다.
+                    if(maxArrayInfo[0] != undefined && (9-k+roundMaxPoint) < maxArrayInfo[0][2] && x >= 2){
+                        break;
+                    }
+                }
+                maxArrayInfo[0][3] = 0;
+                roundMaxPoint = 0;
+                resultArray = [];
+            }
+
+            var output = [];
+            var maxArrayInfoLength = maxArrayInfo.length;
+
+            for(var resultOut = 0 ; resultOut < maxArrayInfoLength ; resultOut++){
+                output.push(maxArrayInfo[resultOut][0]+"-"+maxArrayInfo[resultOut][1]);
+            }
+
+            document.getElementById("output").innerHTML = output.join(",");
+
+        };
+
+        reader.readAsText(file, "euc-kr");
+    }
+
+    function oneArrayAddValue(resultArray, alphaMemberArr, meNumber, maxArrayInfo, roundMaxPoint){
+        if(resultArray[alphaMemberArr] == undefined){
+            resultArray[alphaMemberArr] = 0;
+        }
+
+        if(alphaMemberArr != meNumber){
+            resultArray[alphaMemberArr] = resultArray[alphaMemberArr] + 1;
+        }
+
+        if(roundMaxPoint == 0 || roundMaxPoint < resultArray[alphaMemberArr]){
+            roundMaxPoint = resultArray[alphaMemberArr];
+        }
+
+        if(maxArrayInfo.length == 0 || maxArrayInfo[0][2]*1 < resultArray[alphaMemberArr]*1){
+            maxArrayInfo = [];
+            maxArrayInfo[0] = [meNumber, alphaMemberArr, resultArray[alphaMemberArr]];
+        }else if(maxArrayInfo[0][2] == resultArray[alphaMemberArr]){
+            maxArrayInfo[maxArrayInfo.length] = [meNumber, alphaMemberArr, resultArray[alphaMemberArr]];
+        }
+
+        maxArrayInfo[0][3] = roundMaxPoint;
+
+        return maxArrayInfo;
+    }
+
+    function doubleArrayAddValue(alphaArray, alphaArrayNumber, i){
+        if(alphaArray[alphaArrayNumber]==undefined){
+            alphaArray[alphaArrayNumber] = [i];
+        }else{
+            alphaArray[alphaArrayNumber][alphaArray[alphaArrayNumber].length] = i;
+        }
+    }
+</script>
+</html>
