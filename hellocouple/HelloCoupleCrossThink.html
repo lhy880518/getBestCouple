@@ -37,36 +37,31 @@
 
             // 겹칩이 한번이라도 발생할때만 넣는 객체 입니다.
             var resultObjData = {};
-            var resultMax = 1;
-            console.log("start");
-            for(var i=1 ; i <= dataArray[0] ; i++){
-                for(var k=10 ; k >= max_combi ; k--){
 
+            // 비교 방식에 대해 큰 수정이 있다. 어차피 겹침이 발생하게되면 그 이하는 확인하지 않는게 주 목적이니
+            // 10글자부터 비교해서 확인하는 방식으로 수정
+            for(var k=10 ; k >= max_combi ; k--){
+
+                for(var i=1 ; i <= dataArray[0] ; i++){
                     var combinationArray = callDoCombi(dataArray[i].replace(/[^A-Z]/gi,"").split("").sort(), k);
                     var combiLength = combinationArray.length;
 
                     for(var m = 0 ; m < combiLength ; m++){
                         if(objData[combinationArray[m].join("")] != undefined){
                             objData[combinationArray[m].join("")][objData[combinationArray[m].join("")].length] = i;
-
-                            // 초기화 부분 개선 resultObjData = [] -> resultObjData = {}
-                            if(max_combi < k){
-                                resultObjData = {};
-                            }
                             resultObjData[combinationArray[m].join("")] = objData[combinationArray[m].join("")];
                             max_combi = k;
                         }else{
                             objData[combinationArray[m].join("")] = [i];
                         }
                     }
+                }
 
-                    if(max_combi == k){
-                        break;
-                    }
+                if(max_combi == k){
+                    break;
                 }
             }
             console.log("end");
-
             var output = "";
             for(var key in resultObjData){
                 output += callDoCombiForResult(resultObjData[key],2);
@@ -75,6 +70,7 @@
             document.getElementById("btn").style.display="block";
             document.getElementById("output").innerHTML = "";
             document.getElementById("output").innerHTML = output;
+
         };
 
         reader.readAsText(file, "euc-kr");

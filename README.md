@@ -79,3 +79,28 @@
 
 * 재귀함수의 사용
     * callDoCombi함수를 구현하려다보니 처음에는 남에꺼 가져다 썼다가 이번에 재귀함수를 사용했는데 알다가도 어렵다..
+    
+* 데이터 확인의 중요성
+
+    <img width="565" alt="differ" src="https://user-images.githubusercontent.com/24884819/56873964-4f8cff80-6a71-11e9-988c-8f6a4acbb61d.png">
+    
+    * 파일 내부의 데이터를 \n기준으로 split하여 데이터를 처리하려 하였으나 이상하게도 보이지 않는 특수 문자가 포함되어져 있었다.
+    그거 때문에 실컷 답 다 구하고도 제대로 도출도 하지 못하였다. 결과를 도출함에 있어서 꾸준한 확인이 필요하겠다.
+    ~~~
+    // 초기화 부분 개선 resultObjData = [] -> resultObjData = {}
+    if(max_combi < k){
+        resultObjData = {};
+    }
+    ~~~
+    * 이 부분 또한 제대로 확인이 안되어서 헤메었던 부분 원하던건 최신의 max_combi처리를 위한 부분이었는데 초기화를 배열로 해서 추후 데이터 출력에서 문제가 되었다.
+    
+* 빠른속도의 JavaScript Object와 ES6자료 구조들
+    ~~~
+    for(var key in resultObjData){
+        output += callDoCombiForResult(resultObjData[key],2);
+    }
+    ~~~
+    * 아무래도 진행하면서 자바스크립트에는 자료구조가 없는가에 대해서 굉장히 많이 찾아보게된 계기가 되었다. JAVA에 존재하는 자료구조들에 대해서
+    고마움도 느끼고 데이터를 저장하고 출력하는 방면에서는 Object에서의 속도가 굉장히 빨랐다.
+    * [ES6에서부터 지원하는 Set, Map자료구조 또한 써보면 좋을것 같다.](https://medium.com/@hongkevin/js-5-es6-map-set-2a9ebf40f96b)
+> 이 문제에 대해서는 여기까지~ 고생했습니다 Tim, [Noah](https://github.com/BangShinChul)
